@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARO Network | Jade Rewards Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; }
+        .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .accent-text { color: #38bdf8; }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div class="max-w-md w-full glass-card rounded-2xl p-8 shadow-2xl">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold mb-2">ARO <span class="accent-text">Sentinel</span></h1>
+            <p class="text-gray-400 text-sm">Testnet Sprint 2 Rewards Calculator</p>
+        </div>
+
+        <!-- Inputs -->
+        <div class="space-y-6">
+            <!-- Node Type -->
+            <div>
+                <label class="block text-sm font-medium mb-2">Select Node Type</label>
+                <select id="nodeType" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white outline-none focus:border-sky-500">
+                    <option value="10">ARO Mobile (10 Jade/hr)</option>
+                    <option value="25" selected>ARO Desktop (25 Jade/hr)</option>
+                    <option value="100">ARO Pod (100 Jade/hr)</option>
+                    <option value="150">ARO Server (150 Jade/hr)</option>
+                </select>
+            </div>
+
+            <!-- Uptime -->
+            <div>
+                <div class="flex justify-between mb-2">
+                    <label class="text-sm font-medium">Daily Uptime</label>
+                    <span id="hoursLabel" class="accent-text font-bold">24 Hours</span>
+                </div>
+                <input type="range" id="uptime" min="1" max="24" value="24" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-sky-500">
+            </div>
+
+            <!-- Referrals -->
+            <div>
+                <label class="block text-sm font-medium mb-2">Active Referrals (15% Bonus Each)</label>
+                <input type="number" id="referrals" value="0" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white outline-none focus:border-sky-500">
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="my-8 border-t border-slate-700"></div>
+
+        <!-- Results -->
+        <div class="grid grid-cols-2 gap-4 text-center">
+            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Daily Jade</p>
+                <p id="dailyResult" class="text-2xl font-bold accent-text">0</p>
+            </div>
+            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Monthly Jade</p>
+                <p id="monthlyResult" class="text-2xl font-bold accent-text">0</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-8 text-center">
+            <p class="text-gray-500 text-xs italic">*Estimates based on current S2 network protocols.</p>
+        </div>
+    </div>
+
+    <script>
+        const nodeTypeEl = document.getElementById('nodeType');
+        const uptimeEl = document.getElementById('uptime');
+        const hoursLabel = document.getElementById('hoursLabel');
+        const referralsEl = document.getElementById('referrals');
+        const dailyResult = document.getElementById('dailyResult');
+        const monthlyResult = document.getElementById('monthlyResult');
+
+        function calculate() {
+            const baseRate = parseInt(nodeTypeEl.value);
+            const hours = parseInt(uptimeEl.value);
+            const referrals = parseInt(referralsEl.value) || 0;
+
+            // Update Label
+            hoursLabel.textContent = `${hours} Hours`;
+
+            // Core Logic
+            let baseDaily = baseRate * hours;
+            let referralBonus = baseDaily * (referrals * 0.15);
+            let totalDaily = Math.floor(baseDaily + referralBonus);
+
+            // Display
+            dailyResult.textContent = totalDaily.toLocaleString();
+            monthlyResult.textContent = (totalDaily * 30).toLocaleString();
+        }
+
+        // Event Listeners
+        nodeTypeEl.addEventListener('change', calculate);
+        uptimeEl.addEventListener('input', calculate);
+        referralsEl.addEventListener('input', calculate);
+
+        // Run on load
+        calculate();
+    </script>
+</body>
+</html>
